@@ -7,7 +7,12 @@ export class TodoitEditorProvider implements vscode.CustomTextEditorProvider {
     const provider = new TodoitEditorProvider(context);
     const providerRegistration = vscode.window.registerCustomEditorProvider(
       TodoitEditorProvider.viewType,
-      provider
+      provider,
+      {
+        webviewOptions: {
+          retainContextWhenHidden: true,
+        },
+      }
     );
     return providerRegistration;
   }
