@@ -4,6 +4,10 @@
   --color-primary: #73d0ef;
 }
 
+body, #root {
+  font-size: 15px;
+}
+
 input:focus{
   outline: none;
   box-shadow: none;

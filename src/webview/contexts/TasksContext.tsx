@@ -10,6 +10,7 @@ interface TasksContextValue {
 	editTask: (id: string, newText: string) => void;
 	deleteTask: (id: string) => void;
 	changeStatus: (id: string, status: TaskStatus) => void;
+	reorderTasks: (fromIndex: number, toIndex: number) => void;
 	getDone: () => number;
 }
 
@@ -156,9 +157,46 @@ export const TasksProvider: React.FC<TasksProviderProps> = ({ children }) => {
 		return count;
 	}, [tasks]);
 
+	const reorderTasks = useCallback(
+		(fromIndex: number, toIndex: number) => {
+			if (fromIndex === toIndex) return;
+
+			const normalized = normalizeText(text);
+			const lines = normalized.split("\n");
+			const taskLines: Array<{ line: number; content: string }> = [];
+
+			// Collect all task lines with their original positions
+			lines.forEach((line, index) => {
+				if (line.match(/^(\s*)(- )?\[([ *xX])\]/)) {
+					taskLines.push({ line: index, content: line });
+				}
+			});
+
+			// Get the tasks we're reordering
+			if (fromIndex >= taskLines.length || toIndex >= taskLines.length) return;
+
+			// Reorder the task lines
+			const [movedTask] = taskLines.splice(fromIndex, 1);
+			taskLines.splice(toIndex, 0, movedTask);
+
+			// Rebuild the lines array with reordered tasks
+			let taskIndex = 0;
+			const newLines = lines.map((line, index) => {
+				if (line.match(/^(\s*)(- )?\[([ *xX])\]/)) {
+					return taskLines[taskIndex++].content;
+				}
+				return line;
+			});
+
+			const newText = newLines.join("\n");
+			onTextUpdate(newText);
+		},
+		[text, normalizeText, onTextUpdate]
+	);
+
 	const value: TasksContextValue = useMemo(
-		() => ({ tasks, addTask, editTask, deleteTask, changeStatus, getDone }),
-		[tasks, addTask, editTask, deleteTask, changeStatus, getDone]
+		() => ({ tasks, addTask, editTask, deleteTask, changeStatus, reorderTasks, getDone }),
+		[tasks, addTask, editTask, deleteTask, changeStatus, reorderTasks, getDone]
 	);
 
 	return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;
