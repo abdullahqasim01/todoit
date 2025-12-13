@@ -1,58 +1,28 @@
 import { useTasks } from "../contexts/TasksContext";
 
-interface HeaderProps {
-  view: string;
-  setView: any;
-}
-
-const Header = ({ view, setView }: HeaderProps) => {
+const Header = () => {
   const { tasks, getDone } = useTasks();
   const total = tasks.length;
   const done = getDone();
-  const button = "p-1 px-2";
-  const buttonInactive = "text-[var(--vscode-editorLineNumber-foreground)]";
-  const buttonActive =
-    "text-[var(--vscode-statusBar-foreground)] border-[var(--vscode-editorLineNumber-foreground)] rounded-md border-1";
+  const completion = total > 0 ? (done / total) * 100 : 0;
 
   return (
-    <div className="flex flex-row justify-between w-full">
-      <div className="flex flex-row gap-2 bg-[var(--vscode-input-background)] p-1 font-bold rounded-lg">
-        <button
-          className={`${button} ${
-            view === "combined" ? buttonActive : buttonInactive
-          } `}
-          onClick={() => setView("combined")}
-        >
-          Combined
-        </button>
-        <button
-          className={`${button} ${
-            view === "table" ? buttonActive : buttonInactive
-          }`}
-          onClick={() => setView("table")}
-        >
-          Table
-        </button>
-        <button
-          className={`${button} ${
-            view === "text" ? buttonActive : buttonInactive
-          }`}
-          onClick={() => setView("text")}
-        >
-          Text
-        </button>
+    <div className="flex flex-row justify-between items-center w-full">
+      <div className="flex flex-col">
+        <span className="font-bold">Tasks</span>
+        <span className="text-[var(--vscode-editorLineNumber-foreground)]">
+          {total} total
+        </span>
       </div>
-      <div className="flex flex-col gap-1 items-center">
+      <div className="flex flex-col gap-1 items-end min-w-[160px]">
         <p className="text-[var(--vscode-editorLineNumber-foreground)]">
-          {done}/{total} Tasks Completed
+          {done}/{total || 1} tasks completed
         </p>
         <div className="w-full bg-[var(--vscode-input-background)] h-2 rounded-lg">
-          {done > 0 && (
-            <div
-              className={`h-2 bg-primary rounded-lg`}
-              style={{ width: `${(done / total) * 100}%` }}
-            ></div>
-          )}
+          <div
+            className="h-2 bg-primary rounded-lg transition-all"
+            style={{ width: `${completion}%` }}
+          ></div>
         </div>
       </div>
     </div>
