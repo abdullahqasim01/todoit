@@ -6,4 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- Initial release
+### Added
+- Multi-list support with per-list views and statuses
+- Kanban view with drag-and-drop across columns
+- Status management (add/edit/delete/reorder with colors)
+- Task drag-and-drop reordering in table and Kanban
+- JSON-based storage for tasks and settings inside `.todoit` files

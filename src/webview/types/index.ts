@@ -1,9 +1,26 @@
+export interface StatusType {
+  id: string;
+  label: string;
+  color: string;
+}
+
 export interface TaskType {
   id: string;
   text: string;
-  completed: boolean;
-  status?: "todo" | "doing" | "done";
-  line: number;
+  statusId: string;
+}
+
+export interface ListType {
+  id: string;
+  name: string;
+  view: "table" | "kanban";
+  statuses: StatusType[];
+  tasks: TaskType[];
+}
+
+export interface DocumentData {
+  lists: ListType[];
+  activeListId: string;
 }
 
 export interface VSCodeApiType {

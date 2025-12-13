@@ -1,77 +1,47 @@
 # Todoit 📝
 
-A simple yet powerful task management extension for VS Code that combines text-based simplicity with an interactive task view. Keep your tasks organized and accessible right within your development environment.
+A multi-list task manager for VS Code with table and kanban views, custom statuses, and drag-and-drop. Everything is stored as JSON in your `.todoit` files—fast, local, and version-control friendly.
 
 ## ✨ Features
 
-Todoit provides a seamless task management experience with:
-
-### 📋 Interactive Task Management
-- **Dual View Mode**: Switch between raw text and interactive table view
-- **Task Status Tracking**: Support for Todo (`[ ]`), In Progress (`[*]`), and Done (`[x]`) states
-- **Inline Editing**: Edit tasks directly in the table view
-- **Real-time Sync**: Changes in text mode instantly reflect in table view and vice versa
-
-### 📄 File Format Support
-- Works with `.todoit` and `.todoit.txt` files
-- Simple, human-readable text format
-- Compatible with any text editor
-- Version control friendly
-
-### 🎯 Task Syntax
-```
-[ ] Todo task
-[*] In progress task  
-[x] Completed task
-```
-
-### 💡 Key Benefits
-- **Stay in VS Code**: No need to switch to external task managers
-- **Developer Friendly**: Text-based format that integrates with your workflow
-- **Flexible Views**: Choose between text editing and visual task management
-- **Lightweight**: Minimal overhead, maximum productivity
+- **Multiple lists**: Create/rename/delete lists; each list has its own tasks, statuses, and view.
+- **Two views per list**: Table view for quick edits; Kanban view with drag-and-drop between columns.
+- **Custom statuses**: Add/edit/delete statuses per list, choose colors, and reorder status columns via drag-and-drop.
+- **Drag-and-drop tasks**: Reorder in table; move across columns in Kanban (drop on card to insert before, or on column to append).
+- **JSON storage**: Tasks and settings persist as JSON inside `.todoit` files—ready for git.
+- **Lightweight + local**: No cloud dependencies; works entirely within VS Code.
 
 ## 🚀 Getting Started
 
-1. **Create a Task File**: Create a new file with `.todoit` or `.todoit.txt` extension
-2. **Add Tasks**: Write tasks using the simple checkbox syntax:
-   ```
-   [ ] Review pull request
-   [*] Implement new feature
-   [x] Fix bug in authentication
-   ```
-3. **Switch Views**: Use the view toggle to switch between text and table modes
-4. **Manage Tasks**: Click checkboxes, edit text, or add new tasks in table view
+1. Create a file ending in `.todoit` (or `.todoit.txt`).
+2. Open it; Todoit loads and stores data as JSON automatically.
+3. Add a list from the top bar, then add tasks in table view or Kanban.
+4. Customize statuses in the Settings modal (gear button next to the progress bar).
+5. Drag tasks to reorder or move between statuses.
 
 ## 📖 Usage Examples
 
-### Project Planning
+### Example JSON shape (stored in file)
 ```
-Project Setup:
-[ ] Initialize repository
-[x] Set up development environment
-[ ] Configure CI/CD pipeline
-[*] Create initial documentation
-
-Development Tasks:
-[ ] Implement user authentication
-[ ] Add database integration
-[ ] Write unit tests
-[ ] Deploy to staging
-```
-
-### Daily Task Management
-```
-Today's Tasks:
-[ ] Check emails
-[x] Team standup
-[ ] Code review for PR #456
-[*] Work on feature branch
-[ ] Update project documentation
-
-Notes:
-- Remember to sync with backend team
-- Deploy by Friday
+{
+   "lists": [
+      {
+         "id": "list-default",
+         "name": "Default",
+         "view": "table",
+         "statuses": [
+            { "id": "todo", "label": "To Do", "color": "#808080" },
+            { "id": "doing", "label": "Doing", "color": "#4A9EFF" },
+            { "id": "done", "label": "Done", "color": "#4CAF50" }
+         ],
+         "tasks": [
+            { "id": "task-1", "text": "Review pull request", "statusId": "todo" },
+            { "id": "task-2", "text": "Ship feature", "statusId": "doing" }
+         ]
+      }
+   ],
+   "activeListId": "list-default"
+}
 ```
 
 ## 🔧 Installation
@@ -85,21 +55,15 @@ Notes:
 
 ## 🎛️ Extension Settings
 
-Todoit works out of the box with no configuration required. The extension automatically activates when you open `.todoit` or `.todoit.txt` files.
+No VS Code settings required. All per-list settings (statuses, view) are stored in the file itself.
 
 ## 🐛 Known Issues
 
-- Initial release - please report any issues you encounter
+- None known; please report issues you hit.
 
 ## 📝 Release Notes
 
-### 1.0.0
-
-- Initial release of Todoit
-- Basic task management with checkbox syntax
-- Dual view mode (text and table)
-- Real-time synchronization between views
-- Support for todo, in-progress, and completed task states
+See `CHANGELOG.md`.
 
 ## 🤝 Contributing
 
