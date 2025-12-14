@@ -44,7 +44,7 @@ const Header = ({ onOpenSettings }: HeaderProps) => {
         <div className="flex items-center gap-2 min-w-[200px]">
           <div className="flex flex-col gap-1 items-end w-full">
             <p className="text-[var(--vscode-editorLineNumber-foreground)]">
-              {done}/{total || 1} done
+              {done}/{total || 0} done
             </p>
             <div className="w-full bg-[var(--vscode-input-background)] h-2 rounded-lg">
               <div
