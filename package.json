@@ -2,7 +2,7 @@
   "name": "todoit",
   "displayName": "Todoit",
   "description": "A simple text based task list with the list view in vs code",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "engines": {
     "vscode": "^1.102.0"
   },
