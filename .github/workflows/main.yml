@@ -1,0 +1,62 @@
+name: Publish VS Code Extension
+
+on:
+  push:
+    branches:
+      - main   # Publish on push to main branch
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install vsce and ovsx
+        run: npm install -g @vscode/vsce ovsx
+
+      - name: Get extension version
+        id: version
+        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
+
+      - name: Check if version exists on VS Code Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          if vsce show . --json | jq -e '.versions[] | select(.version == "${{ steps.version.outputs.version }}")' > /dev/null; then
+            echo "Version already exists on VS Code Marketplace. Skipping publish."
+            exit 1
+          fi
+
+      - name: Package extension (once)
+        run: vsce package
+
+      - name: Publish to VS Code Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          vsce publish --packagePath *.vsix --pat $VSCE_PAT
+
+      - name: Check if version exists on Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          if ovsx get ${{ github.repository }}@${{ steps.version.outputs.version }} > /dev/null 2>&1; then
+            echo "Version already exists on Open VSX. Skipping publish."
+            exit 1
+          fi
+
+      - name: Publish to Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          ovsx publish *.vsix --pat $OVSX_PAT
