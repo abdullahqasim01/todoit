@@ -26,7 +26,10 @@ jobs:
 
       - name: Get extension version
         id: version
-        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
+        shell: bash
+        run: |
+          VERSION=$(node -e "console.log(require('./package.json').version)")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Check if version exists on VS Code Marketplace
         env:
