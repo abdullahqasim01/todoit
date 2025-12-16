@@ -21,3 +21,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Fixed
 - Total tasks showing 1 when list empty
+
+## [v1.2.2]
+
+### Added
+- Visual drop previews in Kanban, table view, and status settings to show exact insert position
+
+### Fixed
+- Kanban, table, and settings containers now size/scroll correctly without clipping long lists
+- Status settings drag handle now reliably reorders statuses
