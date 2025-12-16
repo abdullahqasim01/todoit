@@ -63,7 +63,11 @@ No VS Code settings required. All per-list settings (statuses, view) are stored 
 
 ## 📝 Release Notes
 
-See `CHANGELOG.md`.
+### 1.2.2
+- Drag-and-drop previews in table, kanban, and status settings show exactly where items will land.
+- Containers now scroll instead of clipping when lists get long, and status drag handles reorder reliably.
+
+See `CHANGELOG.md` for the full history.
 
 ## 🤝 Contributing
 

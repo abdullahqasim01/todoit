@@ -6,6 +6,7 @@ const Kanban: React.FC = () => {
   const { tasks, statuses, changeStatus, deleteTask, editTask, addTask, moveTaskToStatus } = useTasks();
   const [draftText, setDraftText] = useState("");
   const [dragTaskId, setDragTaskId] = useState<string | null>(null);
+  const [dropTarget, setDropTarget] = useState<{ statusId: string; beforeTaskId: string | null } | null>(null);
   const grouped = useMemo(() => {
     const buckets: Record<string, TaskType[]> = {};
     statuses.forEach((s) => {
@@ -28,6 +29,24 @@ const Kanban: React.FC = () => {
     if (!dragTaskId) return;
     moveTaskToStatus(dragTaskId, statusId, beforeTaskId);
     setDragTaskId(null);
+    setDropTarget(null);
+  };
+
+  const renderGhostCard = (status: StatusType) => {
+    const task = tasks.find((t) => t.id === dragTaskId);
+    if (!task) return null;
+    return (
+      <div className="drop-preview-card">
+        <div className="flex items-center justify-between text-sm mb-1">
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: status.color }}></span>
+            <span className="text-[var(--vscode-editor-foreground)]">{status.label}</span>
+          </div>
+          <span className="text-[var(--vscode-editorLineNumber-foreground)]">Preview</span>
+        </div>
+        <div className="text-[var(--vscode-editor-foreground)] text-sm">{task.text}</div>
+      </div>
+    );
   };
 
   const renderTask = (task: TaskType, status: StatusType) => (
@@ -39,8 +58,14 @@ const Kanban: React.FC = () => {
         setDragTaskId(task.id);
         e.dataTransfer.effectAllowed = "move";
       }}
-      onDragEnd={() => setDragTaskId(null)}
-      onDragOver={(e) => e.preventDefault()}
+      onDragEnd={() => {
+        setDragTaskId(null);
+        setDropTarget(null);
+      }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setDropTarget({ statusId: status.id, beforeTaskId: task.id });
+      }}
       onDrop={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -78,7 +103,7 @@ const Kanban: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col gap-3 h-full">
+    <div className="flex flex-col gap-3 h-full min-h-0 overflow-hidden">
       <div className="flex gap-2">
         <input
           className="flex-1 border-1 border-[var(--vscode-editorIndentGuide-background)] rounded px-2 py-1"
@@ -97,12 +122,19 @@ const Kanban: React.FC = () => {
           Add
         </button>
       </div>
-      <div className="flex gap-3 overflow-x-auto flex-1">
+      <div className="flex gap-3 overflow-x-auto flex-1 min-h-0 pb-1">
         {statuses.map((status) => (
           <div
             key={status.id}
-            className="min-w-[220px] flex-1 bg-[var(--vscode-input-background)] rounded-lg p-3 flex flex-col gap-3"
-            onDragOver={(e) => e.preventDefault()}
+            className="min-w-[220px] flex-1 bg-[var(--vscode-input-background)] rounded-lg p-3 flex flex-col gap-3 min-h-0"
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDropTarget({ statusId: status.id, beforeTaskId: null });
+            }}
+            onDragLeave={(e) => {
+              if ((e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) return;
+              setDropTarget(null);
+            }}
             onDrop={(e) => {
               e.preventDefault();
               handleCardDrop(status.id);
@@ -116,9 +148,19 @@ const Kanban: React.FC = () => {
               <span>{status.label}</span>
               <span className="text-[var(--vscode-editorLineNumber-foreground)]">{grouped[status.id]?.length ?? 0}</span>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 flex-1 min-h-0 overflow-y-auto pr-1">
               {grouped[status.id]?.length ? (
-                grouped[status.id].map((task) => renderTask(task, status))
+                <>
+                  {dropTarget?.statusId === status.id && dropTarget.beforeTaskId === null && renderGhostCard(status)}
+                  {grouped[status.id].map((task) => (
+                    <React.Fragment key={task.id}>
+                      {dropTarget?.statusId === status.id && dropTarget.beforeTaskId === task.id && renderGhostCard(status)}
+                      {renderTask(task, status)}
+                    </React.Fragment>
+                  ))}
+                </>
+              ) : dropTarget?.statusId === status.id ? (
+                renderGhostCard(status)
               ) : (
                 <div className="text-[var(--vscode-editorLineNumber-foreground)] text-sm">No tasks here</div>
               )}

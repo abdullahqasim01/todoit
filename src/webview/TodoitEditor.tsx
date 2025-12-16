@@ -23,7 +23,7 @@ const TodoitEditorInner: React.FC = () => {
       <div className="flex flex-col gap-4 h-full">
         <ListTabs />
         <Header onOpenSettings={() => setShowSettings(true)} />
-        <div className="w-full flex-1 border-[var(--vscode-editorIndentGuide-background)] border-1 rounded-lg overflow-hidden bg-[var(--vscode-editor-background)] relative">
+        <div className="w-full flex-1 min-h-0 border-[var(--vscode-editorIndentGuide-background)] border-1 rounded-lg overflow-y-auto bg-[var(--vscode-editor-background)] relative">
           {activeList.view === "kanban" ? <Kanban /> : <TaskTable />}
         </div>
       </div>

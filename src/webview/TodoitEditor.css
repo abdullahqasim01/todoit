@@ -23,3 +23,23 @@ select:focus{
   box-shadow: none;
 }
 
+.drop-preview {
+  height: 12px;
+  border: 1px dashed var(--vscode-statusBar-foreground);
+  background: color-mix(in srgb, var(--vscode-statusBar-foreground) 15%, transparent);
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+.drop-preview-active {
+  background: color-mix(in srgb, var(--vscode-statusBar-foreground) 25%, transparent);
+}
+
+.drop-preview-card {
+  border: 1px dashed var(--vscode-statusBar-foreground);
+  background: color-mix(in srgb, var(--vscode-statusBar-foreground) 8%, transparent);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 4px 0;
+}
+
