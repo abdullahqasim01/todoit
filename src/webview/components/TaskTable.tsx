@@ -3,7 +3,7 @@ import { useTasks } from "../contexts/TasksContext";
 import { StatusType } from "../types";
 
 const TaskTable: React.FC = memo(() => {
-  const { tasks, statuses, deleteTask, editTask, addTask, changeStatus, reorderTasks } = useTasks();
+  const { tasks, statuses, deleteTask, editTask, addTask, changeStatus, reorderTasks, setSelectedTaskId } = useTasks();
   const [editingTask, setEditingTask] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   const [addText, setAddText] = useState("");
@@ -151,9 +151,15 @@ const TaskTable: React.FC = memo(() => {
                   <tr
                     onDragOver={(e) => handleDragOver(e, index)}
                     onDrop={(e) => handleDrop(e, index)}
+                    onClick={() => {
+                      // Only navigate to detail view if not editing
+                      if (editingTask !== task.id) {
+                        setSelectedTaskId(task.id);
+                      }
+                    }}
                     className={`leading-[50px] border-y-1 border-[var(--vscode-editorIndentGuide-background)] ${
                       draggedTask === task.id ? "opacity-50" : ""
-                    }`}
+                    } cursor-pointer hover:bg-[var(--vscode-list-hoverBackground)]`}
                   >
                     <td
                       className="max-w-[50px] p-1 text-center cursor-move"

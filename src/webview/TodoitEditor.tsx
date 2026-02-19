@@ -7,6 +7,7 @@ import Kanban from "./components/Kanban";
 import ListSettings from "./components/ListSettings";
 import { TasksProvider, useTasks } from "./contexts/TasksContext";
 import { TextProvider } from "./contexts/TextContext";
+import TaskDetail from "./components/TaskDetail";
 
 declare global {
   interface Window {
@@ -15,17 +16,23 @@ declare global {
 }
 
 const TodoitEditorInner: React.FC = () => {
-  const { activeList } = useTasks();
+  const { activeList, selectedTaskId } = useTasks();
   const [showSettings, setShowSettings] = useState(false);
 
   return (
     <div className="w-full h-screen p-2">
       <div className="flex flex-col gap-4 h-full">
         <ListTabs />
-        <Header onOpenSettings={() => setShowSettings(true)} />
-        <div className="w-full flex-1 min-h-0 border-[var(--vscode-editorIndentGuide-background)] border-1 rounded-lg overflow-y-auto bg-[var(--vscode-editor-background)] relative">
-          {activeList.view === "kanban" ? <Kanban /> : <TaskTable />}
-        </div>
+        {selectedTaskId ? (
+          <TaskDetail />
+        ) : (
+          <>
+            <Header onOpenSettings={() => setShowSettings(true)} />
+            <div className="w-full flex-1 min-h-0 border-[var(--vscode-editorIndentGuide-background)] border-1 rounded-lg overflow-y-auto bg-[var(--vscode-editor-background)] relative">
+              {activeList.view === "kanban" ? <Kanban /> : <TaskTable />}
+            </div>
+          </>
+        )}
       </div>
 
       {showSettings && (

@@ -7,6 +7,7 @@ interface TasksContextValue {
 	activeList: ListType;
 	tasks: TaskType[];
 	statuses: StatusType[];
+	selectedTaskId: string | null;
 	addTask: (text: string) => void;
 	editTask: (id: string, newText: string) => void;
 	deleteTask: (id: string) => void;
@@ -18,6 +19,8 @@ interface TasksContextValue {
 	deleteList: (id: string) => void;
 	setActiveList: (id: string) => void;
 	setView: (view: ListType["view"]) => void;
+	setSelectedTaskId: (id: string | null) => void;
+	updateTaskField: (id: string, field: keyof TaskType, value: any) => void;
 	addStatus: (label: string, color: string) => void;
 	updateStatus: (id: string, label: string, color: string) => void;
 	deleteStatus: (id: string) => void;
@@ -104,6 +107,7 @@ const parseDocument = (raw: string): DocumentData => {
 export const TasksProvider: React.FC<TasksProviderProps> = ({ children }) => {
 	const { text, setTextImmediate } = useText();
 	const [document, setDocument] = useState<DocumentData>(() => parseDocument(text));
+	const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
 	// Sync when text updates externally
 	useEffect(() => {
@@ -308,12 +312,23 @@ export const TasksProvider: React.FC<TasksProviderProps> = ({ children }) => {
 		[updateActiveList]
 	);
 
+	const updateTaskField = useCallback(
+		(id: string, field: keyof TaskType, value: any) => {
+			updateActiveList((list) => ({
+				...list,
+				tasks: list.tasks.map((t) => (t.id === id ? { ...t, [field]: value } : t)),
+			}));
+		},
+		[updateActiveList]
+	);
+
 	const value: TasksContextValue = useMemo(
 		() => ({
 			document,
 			activeList: activeList ?? createEmptyDocument().lists[0],
 			tasks: activeList?.tasks ?? [],
 			statuses: activeList?.statuses ?? defaultStatuses,
+			selectedTaskId,
 			addTask,
 			editTask,
 			deleteTask,
@@ -325,12 +340,14 @@ export const TasksProvider: React.FC<TasksProviderProps> = ({ children }) => {
 			deleteList,
 			setActiveList,
 			setView,
+			setSelectedTaskId,
+			updateTaskField,
 			addStatus,
 			updateStatus,
 			deleteStatus,
 			reorderStatuses,
 		}),
-		[document, activeList, addTask, editTask, deleteTask, changeStatus, moveTaskToStatus, reorderTasks, addList, renameList, deleteList, setActiveList, setView, addStatus, updateStatus, deleteStatus, reorderStatuses]
+		[document, activeList, selectedTaskId, addTask, editTask, deleteTask, changeStatus, moveTaskToStatus, reorderTasks, addList, renameList, deleteList, setActiveList, setView, setSelectedTaskId, updateTaskField, addStatus, updateStatus, deleteStatus, reorderStatuses]
 	);
 
 	return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;

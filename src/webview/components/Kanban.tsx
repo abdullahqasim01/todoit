@@ -3,7 +3,7 @@ import { useTasks } from "../contexts/TasksContext";
 import { StatusType, TaskType } from "../types";
 
 const Kanban: React.FC = () => {
-  const { tasks, statuses, changeStatus, deleteTask, editTask, addTask, moveTaskToStatus } = useTasks();
+  const { tasks, statuses, changeStatus, deleteTask, editTask, addTask, moveTaskToStatus, setSelectedTaskId } = useTasks();
   const [draftText, setDraftText] = useState("");
   const [dragTaskId, setDragTaskId] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<{ statusId: string; beforeTaskId: string | null } | null>(null);
@@ -52,8 +52,14 @@ const Kanban: React.FC = () => {
   const renderTask = (task: TaskType, status: StatusType) => (
     <div
       key={task.id}
-      className="p-2 bg-[var(--vscode-editor-background)] border-1 border-[var(--vscode-editorIndentGuide-background)] rounded flex flex-col gap-2"
+      className="p-2 bg-[var(--vscode-editor-background)] border-1 border-[var(--vscode-editorIndentGuide-background)] rounded flex flex-col gap-2 cursor-pointer hover:bg-[var(--vscode-list-hoverBackground)]"
       draggable
+      onClick={(e) => {
+        // Prevent navigation when clicking on interactive elements
+        if (!(e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement || e.target instanceof HTMLButtonElement)) {
+          setSelectedTaskId(task.id);
+        }
+      }}
       onDragStart={(e) => {
         setDragTaskId(task.id);
         e.dataTransfer.effectAllowed = "move";

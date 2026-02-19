@@ -4,16 +4,23 @@ export interface StatusType {
   color: string;
 }
 
+export type PriorityType = "low" | "medium" | "high";
+
 export interface TaskType {
   id: string;
   text: string;
   statusId: string;
+  description?: string;
+  dueDate?: string;
+  priority?: PriorityType;
 }
+
+export type ViewType = "table" | "kanban" | "task-detail";
 
 export interface ListType {
   id: string;
   name: string;
-  view: "table" | "kanban";
+  view: ViewType;
   statuses: StatusType[];
   tasks: TaskType[];
 }
